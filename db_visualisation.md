@@ -54,6 +54,69 @@ created_at          (within the table)
 
 
 
+When creating a DB it is always very usefull and important to first off visualise the DB before actually creating it. While visualising the DB you will also directly figure out how the flow of you're code will interact with you're database. 
+
+For instance you might first upload all needed web-urls for webscraping to a schema calle "web_scraping_urls" . Then secondly fetch those urls from the table within that schema. And after successfully webscraping those urls we can pass/input them into a schema called "successfully_scraped_urls" . When 100 ID's are present within the table "scrapped_urls" within schema "successfully_scraped_urls" we can stop webscrapping urls. 
+
+What data do you need to save? What data do you need to access? What is most clear or logical layout for you're project? What flow does you're code follow? 
+
+
+## Example datbase layouts:
+
+```bash
+web_scraping_data                                                                       (DATABASE NAME)
+│
+├── web_scraping_urls                                                                  (SCHEMA NAME) 
+│   └── urls_to_scrape                                                                 (TABLE NAME)
+│       ├── url_id (SERIAL)                                                           (COLUMN: ID)
+│       ├── url (TEXT)                                                                 (COLUMN: URL)
+│       ├── status (TEXT)                                                              (COLUMN: STATUS)
+│       └── created_at (TIMESTAMP)                                                     (COLUMN: TIME CREATED)
+│
+└── successfully_scraped_urls                                                          (SCHEMA NAME)
+    └── scraped_urls                                                                   (TABLE NAME)
+        ├── url_id (SERIAL)                                                           (COLUMN: ID)
+        ├── url (TEXT)                                                                 (COLUMN: URL)
+        ├── data (JSONB)                                                               (COLUMN: DATA)
+        └── scraped_at (TIMESTAMP)                                                     (COLUMN: TIME SCRAPED)
+
+```
+
+```bash
+ecommerce_inventory                                                                    (DATABASE NAME)
+│
+├── product_catalog                                                                    (SCHEMA NAME) 
+│   └── products                                                                       (TABLE NAME)
+│       ├── product_id (SERIAL)                                                       (COLUMN: ID)
+│       ├── name (TEXT)                                                               (COLUMN: NAME)
+│       ├── description (TEXT)                                                        (COLUMN: DESCRIPTION)
+│       ├── price (NUMERIC)                                                           (COLUMN: PRICE)
+│       ├── quantity_available (INTEGER)                                               (COLUMN: QUANTITY AVAILABLE)
+│       └── created_at (TIMESTAMP)                                                    (COLUMN: TIME CREATED)
+│
+└── order_management                                                                   (SCHEMA NAME)
+    ├── orders                                                                         (TABLE NAME)
+    │   ├── order_id (SERIAL)                                                         (COLUMN: ID)
+    │   ├── customer_name (TEXT)                                                      (COLUMN: CUSTOMER NAME)
+    │   ├── order_date (DATE)                                                         (COLUMN: ORDER DATE)
+    │   ├── total_amount (NUMERIC)                                                    (COLUMN: TOTAL AMOUNT)
+    │   └── status (TEXT)                                                              (COLUMN: STATUS)
+    │
+    └── order_items                                                                    (TABLE NAME)
+        ├── order_item_id (SERIAL)                                                    (COLUMN: ID)
+        ├── order_id (FOREIGN KEY: orders.order_id)                                    (COLUMN: ORDER ID)
+        ├── product_id (FOREIGN KEY: products.product_id)                              (COLUMN: PRODUCT ID)
+        ├── quantity_ordered (INTEGER)                                                 (COLUMN: QUANTITY ORDERED)
+        ├── unit_price (NUMERIC)                                                       (COLUMN: UNIT PRICE)
+        └── subtotal (NUMERIC)                                                         (COLUMN: SUBTOTAL)
+
+```
+
+
+
+
+
+
 
 
 
