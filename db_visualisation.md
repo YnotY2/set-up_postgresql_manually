@@ -47,11 +47,11 @@ Simply the table carries the information we actually want to fetch from a databa
 4, 5, 6. "column"
 A calumn is simply a datatype present within a table. You can have verious different type of columns. We always use atleast these 3.
 The last 3 terms are very much self explanetory, so I am not even going to explain them. Read ther'e names... 
-
+```
 name-id             (within the table within the schema within the database)
 name-data           (within the table within the schema within the database)
 created_at          (within the table within the schema within the database)
-
+```
 
 
 When creating a DB it is always very usefull and important to first off visualise the DB before actually creating it. While visualising the DB you will also directly figure out how the flow of you're code will interact with you're database. 
