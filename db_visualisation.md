@@ -54,6 +54,7 @@ created_at          (within the table within the schema within the database)
 ```
 
 
+# Why visualise a DB? :
 
 When creating a DB it is always very usefull and important to first off visualise the DB before actually creating it. While visualising the DB you will also directly figure out how the flow of you're code will interact with you're database. 
 
