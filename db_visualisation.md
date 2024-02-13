@@ -54,6 +54,7 @@ created_at          (within the table within the schema within the database)
 ```
 
 
+
 When creating a DB it is always very usefull and important to first off visualise the DB before actually creating it. While visualising the DB you will also directly figure out how the flow of you're code will interact with you're database. 
 
 For instance you might first upload all needed web-urls for webscraping to a schema calle "web_scraping_urls" . Then secondly fetch those urls from the table within that schema. And after successfully webscraping those urls we can pass/input them into a schema called "successfully_scraped_urls" . When 100 ID's are present within the table "scrapped_urls" within schema "successfully_scraped_urls" we can stop webscrapping urls. 
