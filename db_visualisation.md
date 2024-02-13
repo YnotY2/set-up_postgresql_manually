@@ -83,6 +83,41 @@ web_scraping_data                                                               
         └── scraped_at (TIMESTAMP)                                                     (COLUMN: TIME SCRAPED)
 
 ```
+corresponding "init-db.psql" file;
+```bash
+-- Create the database if it does not exist
+CREATE DATABASE IF NOT EXISTS web_scraping_data;
+
+-- Connect to the web_scraping_data database
+\c web_scraping_data;
+
+-- Create the web_scraping_urls schema
+CREATE SCHEMA IF NOT EXISTS web_scraping_urls;
+
+-- Create the successfully_scraped_urls schema
+CREATE SCHEMA IF NOT EXISTS successfully_scraped_urls;
+
+-- Create the web_scraping_urls.urls_to_scrape table
+CREATE TABLE IF NOT EXISTS web_scraping_urls.urls_to_scrape (
+    url_id SERIAL PRIMARY KEY,
+    url TEXT,
+    status TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create the successfully_scraped_urls.scraped_urls table
+CREATE TABLE IF NOT EXISTS successfully_scraped_urls.scraped_urls (
+    url_id SERIAL PRIMARY KEY,
+    url TEXT,
+    data JSONB,
+    scraped_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA web_scraping_urls TO <user_name_postgresql>;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA successfully_scraped_urls TO <user_name_postgresql>;
+
+```
+
 
 ```bash
 ecommerce_inventory                                                                    (DATABASE NAME)
@@ -111,6 +146,53 @@ ecommerce_inventory                                                             
         ├── quantity_ordered (INTEGER)                                                 (COLUMN: QUANTITY ORDERED)
         ├── unit_price (NUMERIC)                                                       (COLUMN: UNIT PRICE)
         └── subtotal (NUMERIC)                                                         (COLUMN: SUBTOTAL)
+
+```
+corresponding "init-db.psql" file;
+```bash
+-- Create the database if it does not exist
+CREATE DATABASE IF NOT EXISTS ecommerce_inventory;
+
+-- Connect to the ecommerce_inventory database
+\c ecommerce_inventory;
+
+-- Create the product_catalog schema
+CREATE SCHEMA IF NOT EXISTS product_catalog;
+
+-- Create the order_management schema
+CREATE SCHEMA IF NOT EXISTS order_management;
+
+-- Create the product_catalog.products table
+CREATE TABLE IF NOT EXISTS product_catalog.products (
+    product_id SERIAL PRIMARY KEY,
+    name TEXT,
+    description TEXT,
+    price NUMERIC,
+    quantity_available INTEGER,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create the order_management.orders table
+CREATE TABLE IF NOT EXISTS order_management.orders (
+    order_id SERIAL PRIMARY KEY,
+    customer_name TEXT,
+    order_date DATE,
+    total_amount NUMERIC,
+    status TEXT
+);
+
+-- Create the order_management.order_items table
+CREATE TABLE IF NOT EXISTS order_management.order_items (
+    order_item_id SERIAL PRIMARY KEY,
+    order_id INTEGER REFERENCES order_management.orders(order_id),
+    product_id INTEGER REFERENCES product_catalog.products(product_id),
+    quantity_ordered INTEGER,
+    unit_price NUMERIC,
+    subtotal NUMERIC
+);
+
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA product_catalog TO <user_name_postgresql>;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA order_management TO <user_name_postgresql>;
 
 ```
 
