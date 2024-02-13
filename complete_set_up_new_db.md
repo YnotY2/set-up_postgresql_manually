@@ -111,48 +111,50 @@ Create the scheme by creating a "init-db.psql" file and pasting the following co
 sudo touch init-db.psql 
 ```
 
-(paste this within file)
+
+(paste this within file) Find examples within current repo file-name "db_visualisation.md"
+
 ```bash
 -- Create the database if it does not exist
-CREATE DATABASE IF NOT EXISTS yahoo_mail_sender;
+CREATE DATABASE IF NOT EXISTS example_database;
 
 -- Connect to the yahoo_mail_sender database
-\c yahoo_mail_sender;
+\c example_database;
 
 -- Create the mail_content_template schema
-CREATE SCHEMA IF NOT EXISTS mail_content_template;
+CREATE SCHEMA IF NOT EXISTS <schema_name>;
 
 -- Create the mail_content_unique_parameters schema
-CREATE SCHEMA IF NOT EXISTS mail_content_unique_parameters;
+CREATE SCHEMA IF NOT EXISTS <schema_name>;
 
 -- Create the send_ready_mail schema
-CREATE SCHEMA IF NOT EXISTS send_ready_mail;
+CREATE SCHEMA IF NOT EXISTS <schema_name>;
 
--- Create the mail_content_template.template_data table
-CREATE TABLE IF NOT EXISTS mail_content_template.template_data (
-    template_id SERIAL PRIMARY KEY,
-    template_data JSONB NOT NULL,
+-- Create the <schema_name>.<table_name> table
+CREATE TABLE IF NOT EXISTS <schema_name>.<table_name> (
+    <subject>_id SERIAL PRIMARY KEY,
+    <subject>_data JSONB NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create the mail_content_unique_parameters.parameters_data table
-CREATE TABLE IF NOT EXISTS mail_content_unique_parameters.parameters_data (
-    parameters_id SERIAL PRIMARY KEY,
-    parameters_data JSONB NOT NULL,
+CREATE TABLE IF NOT EXISTS <schema_name>.<table_name> (
+    <subject>_id SERIAL PRIMARY KEY,
+    <subject>_data JSONB NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create the send_ready_mail.mail_data table
-CREATE TABLE IF NOT EXISTS send_ready_mail.mail_data (
-    mail_id SERIAL PRIMARY KEY,
-    mail_data JSONB NOT NULL,
+CREATE TABLE IF NOT EXISTS <schema_name>.<table_name> (
+    <subject>_id SERIAL PRIMARY KEY,
+    <subject>_data JSONB NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA mail_content_template TO yahoo_mail_sender;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA mail_content_unique_parameters TO yahoo_mail_sender;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA send_ready_mail TO yahoo_mail_sender;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA <schema_name> TO <user_name_postgresql>;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA <schema_name> TO <user_name_postgresql>;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA <schema_name> TO <user_name_postgresql>;
 
 ```
 
@@ -162,7 +164,9 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA send_ready_mail TO yahoo_mail_sende
 2, We will run these command from this file using the following "psql" command: 
 
 ```bashpsql
-psql -U postgres -d yahoo_mail_sender -a -f init-db.psql
+psql -U postgres -d <database_name> -a -f init-db.psql
+psql -U postgres -d example_database -a -f init-db.psql
+
 ```
 
 3, Verify the schema was created succesfully on the database "yahoo_mail_sender" 
@@ -179,17 +183,16 @@ This should output the following:
                   List of schemas
               Name              |       Owner       
 --------------------------------+-------------------
- mail_content_template          | postgres
- mail_content_unique_parameters | postgres
- public                         | pg_database_owner
- send_ready_mail                | postgres
-(4 rows)
+ <schema>                       | postgres
+ <schema>                       | postgres
+ <schema>                       | postgres
+(3 rows)
 
 ```
 
 
 ## Granting all needed privledges to the user "yahoo_mail_sender" corresponding to database ! 
-Final step is checking if permissions where granted successfully the user "yahoo_mail_sender" on database "yahoo_mail_sender" .
+Final step is checking if permissions where granted successfully the specified user on specified database.
 
 1, Check if table schemas is present and correct :D 
 
@@ -197,7 +200,7 @@ Final step is checking if permissions where granted successfully the user "yahoo
 -- Check if the tables exist
 SELECT table_schema, table_name
 FROM information_schema.tables
-WHERE table_schema IN ('mail_content_template', 'mail_content_unique_parameters', 'send_ready_mail');
+WHERE table_schema IN ('<schema_name>', '<schema_name>', '<schema_name>');
 
 ```
 Ouput should be:
@@ -205,20 +208,21 @@ Ouput should be:
 ```bash
           table_schema          |   table_name    
 --------------------------------+-----------------
- mail_content_template          | template_data
- mail_content_unique_parameters | parameters_data
- send_ready_mail                | mail_data
+ <schema_name>                  | <table_name>
+ <schema_name>                  | <table_name>
+ <schema_name>                  | <table_name>
 (3 rows)
 
 ```
 
-2, Verify permissions have successfully been granted to the user "yahoo_mail_sender" on corresponding datbase "yahoo_mail_sender": 
-Run following cli cmd from within the "psql -U postgres -d yahoo_mail_sender" terminal window. 
+2, Verify permissions have successfully been granted to the user on corresponding datbase : 
+
+Run following cli cmd from within the "psql example_database" terminal window. (example_database=#)
 
 ```bash
 SELECT grantee, table_schema, table_name, privilege_type
 FROM information_schema.table_privileges
-WHERE grantee = 'yahoo_mail_sender';
+WHERE grantee = 'example_database';
 
 ```
 
@@ -228,30 +232,33 @@ Ouput:
 ```bash
       grantee      |          table_schema          |   table_name    | privilege_type 
 -------------------+--------------------------------+-----------------+----------------
- yahoo_mail_sender | mail_content_template          | template_data   | INSERT
- yahoo_mail_sender | mail_content_template          | template_data   | SELECT
- yahoo_mail_sender | mail_content_template          | template_data   | UPDATE
- yahoo_mail_sender | mail_content_template          | template_data   | DELETE
- yahoo_mail_sender | mail_content_template          | template_data   | TRUNCATE
- yahoo_mail_sender | mail_content_template          | template_data   | REFERENCES
- yahoo_mail_sender | mail_content_template          | template_data   | TRIGGER
- yahoo_mail_sender | mail_content_unique_parameters | parameters_data | INSERT
- yahoo_mail_sender | mail_content_unique_parameters | parameters_data | SELECT
- yahoo_mail_sender | mail_content_unique_parameters | parameters_data | UPDATE
- yahoo_mail_sender | mail_content_unique_parameters | parameters_data | DELETE
- yahoo_mail_sender | mail_content_unique_parameters | parameters_data | TRUNCATE
- yahoo_mail_sender | mail_content_unique_parameters | parameters_data | REFERENCES
- yahoo_mail_sender | mail_content_unique_parameters | parameters_data | TRIGGER
- yahoo_mail_sender | send_ready_mail                | mail_data       | INSERT
- yahoo_mail_sender | send_ready_mail                | mail_data       | SELECT
- yahoo_mail_sender | send_ready_mail                | mail_data       | UPDATE
- yahoo_mail_sender | send_ready_mail                | mail_data       | DELETE
- yahoo_mail_sender | send_ready_mail                | mail_data       | TRUNCATE
- yahoo_mail_sender | send_ready_mail                | mail_data       | REFERENCES
- yahoo_mail_sender | send_ready_mail                | mail_data       | TRIGGER
+ example_database | example_schema                  | example_table   | INSERT
+ example_database | example_schema                  | example_table   | SELECT
+ example_database | example_schema                  | example_table   | UPDATE
+ example_database | example_schema                  | example_table   | DELETE
+ example_database | example_schema                  | example_table   | TRUNCATE
+ example_database | example_schema                  | example_table   | REFERENCES
+ example_database | example_schema                  | example_table   | TRIGGER
+ example_database | example_schema                  | example_table   | INSERT
+ example_database | example_schema                  | example_table   | SELECT
+ example_database | example_schema                  | example_table   | UPDATE
+ example_database | example_schema                  | example_table   | DELETE
+ example_database | example_schema                  | example_table   | TRUNCATE
+ example_database | example_schema                  | example_table   | REFERENCES
+ example_database | example_schema                  | example_table   | TRIGGER
+ example_database | example_schema                  | example_table   | INSERT
+ example_database | example_schema                  | example_table   | SELECT
+ example_database | example_schema                  | example_table   | UPDATE
+ example_database | example_schema                  | example_table   | DELETE
+ example_database | example_schema                  | example_table   | TRUNCATE
+ example_database | example_schema                  | example_table   | REFERENCES
+ example_database | example_schema                  | example_table   | TRIGGER
 (21 rows)
 
 ```
+
+
+Su
 
 
 
